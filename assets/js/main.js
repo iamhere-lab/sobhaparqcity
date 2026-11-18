@@ -202,7 +202,7 @@
     var nameErr = nameProblem(name);
     if (nameErr) { setError(form, "name", nameErr); ok = false; first = first || form.elements.name; }
     else setError(form, "name", "");
-    if (!phoneValid(cc, digits)) { setError(form, "phone", cc === "+91" ? "Please enter a real 10-digit Indian mobile number (starting 6–9)." : "Please enter a valid mobile number for " + cc + "."); ok = false; first = first || form.elements.phone; }
+    if (!phoneValid(cc, digits)) { setError(form, "phone", "Please enter a valid mobile number."); ok = false; first = first || form.elements.phone; }
     else setError(form, "phone", "");
     var email = (form.elements.email ? form.elements.email.value.trim() : "");
     var emailErr = email ? emailProblem(email) : "";
