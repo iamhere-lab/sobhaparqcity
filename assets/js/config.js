@@ -27,7 +27,7 @@ window.SH_CONFIG = {
   phoneE164: "+917676665738",
 
   /* WhatsApp number, digits only with country code (e.g. "919876543210"). WhatsApp buttons stay hidden until set. */
-  whatsappNumber: "",
+  whatsappNumber: "917676665738",
   whatsappMessage: "Hi, I'm interested in SOBHA ParQ City, Bengaluru. Please share the price sheet, floor plans and EOI details.",
 
   /* Auto-open the enquiry popup once per session, on whichever comes first:
