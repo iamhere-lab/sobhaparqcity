@@ -1047,3 +1047,62 @@ button.hero-eoi { display: inline-flex; flex-direction: row; align-items: center
 .close-form .form-title { margin-bottom: 12px; }
 .loc-card a.btn, .loc-card a.btn:hover { background: var(--dark); border: 1px solid var(--dark); color: #fff; }
 .loc-card a.btn:hover { background: #18291f; }
+
+/* ============ Theme · Jacaranda Twilight (matches the launch ad creatives) ============
+   Deep plum #2a1d47 / #1c1333, lilac #9b86c6, rose glow #d98aa6, champagne-gold CTA with plum type,
+   lilac-white bands. Fonts stay Source Serif 4 + Figtree, as on the previous site. */
+:root {
+  --ink: #1f1830;
+  --grey-2: #5c5570;
+  --beige: #6b4ea0;                          /* violet accent, text-safe on light bands */
+  --beige-soft: rgba(107, 78, 160, .26);
+  --beige-faint: rgba(155, 134, 198, .13);
+  --navy: #2a1d47;
+  --dark: #2a1d47;
+  --band: #f6f2fb;
+  --band-2: #efe9f7;
+  --gold: #ecd5a0;                           /* champagne, for type on plum */
+  --terra: #d9b769;                          /* CTA fill (gold) */
+  --pink: #9b86c6;
+  --line: #e3dbef;
+  --cta: linear-gradient(100deg, #f3e2b3 0%, #e2c27a 48%, #c9a253 100%);
+  --cta-ink: #2a1d47;
+}
+.display.center::after { background: linear-gradient(90deg, #c9a253 0 62%, var(--pink) 62% 100%); }
+.btn:hover, .side-tab:hover, .btn-outline:hover, .hdr-visit:hover, .hero-form .btn-submit:hover, .loc-card a.btn:hover { background: #1c1333; border-color: #1c1333; color: #fff; }
+
+/* hero: twilight aerial on the right, plum sky wash over it */
+.hero { background-color: #1c1333; }
+.hero > .hero-slide { object-position: 62% 50%; }
+@media (min-width: 900px) { .hero > .hero-slide { left: auto; right: 0; width: 70%; } }
+.hero-shade { background: linear-gradient(90deg, #1c1333 0%, #1c1333 30%, rgba(28,19,51,.82) 42%, rgba(28,19,51,.3) 66%, rgba(28,19,51,.12) 100%), linear-gradient(0deg, rgba(28,19,51,.6), transparent 40%); }
+@media (max-width: 899px) { .hero-shade { background: linear-gradient(180deg, rgba(28,19,51,.72) 0%, rgba(28,19,51,.84) 42%, rgba(28,19,51,.94) 100%); } }
+.pq-word i { background: linear-gradient(100deg, #f6e8c2 0%, #e6c98a 50%, #c9a253 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+/* gold call-to-action with plum type, as on the creatives */
+.hero-eoi, button.hero-eoi,
+.action-bar .ab-enquire,
+.pt-side .btn, .eoi-foot .btn,
+.hero-form .btn-submit, .close-form .btn-submit {
+  background: var(--cta); border-color: #c9a253; color: var(--cta-ink); font-weight: 700;
+  box-shadow: 0 10px 26px -14px rgba(226,194,122,.9);
+}
+button.hero-eoi:hover, .action-bar .ab-enquire:hover,
+.pt-side .btn:hover, .eoi-foot .btn:hover,
+.hero-form .btn-submit:hover, .close-form .btn-submit:hover {
+  background: linear-gradient(100deg, #f8ebc6 0%, #ecd08d 48%, #d6b061 100%); border-color: #c9a253; color: var(--cta-ink);
+}
+.hero-eoi-dot { background: var(--cta-ink); box-shadow: 0 0 0 0 rgba(42,29,71,.55); animation-name: twPulse; }
+@keyframes twPulse { 0% { box-shadow: 0 0 0 0 rgba(42,29,71,.55); } 70% { box-shadow: 0 0 0 9px rgba(42,29,71,0); } 100% { box-shadow: 0 0 0 0 rgba(42,29,71,0); } }
+.js-plan.is-locked:hover .fp-lock { background: #c9a253; color: var(--cta-ink); }
+.js-plan.is-locked::after { background: rgba(246,242,251,.3); }
+.pt-row:hover, .pt-table tbody tr .pt-row:hover { background: rgba(155,134,198,.14); }
+.eoi-sec .hl-grid li { background: linear-gradient(90deg, rgba(236,213,160,.2) 0%, rgba(236,213,160,.06) 55%, rgba(236,213,160,0) 100%); }
+.eoi-steps li { border-color: rgba(236,213,160,.4); }
+.modal-offer-inner { background: linear-gradient(180deg, rgba(28,19,51,.55) 0%, rgba(28,19,51,.84) 38%, rgba(22,14,42,.96) 70%, rgba(22,14,42,.98) 100%); }
+.fp-img, .pl-thumb, .fp-img img, .g-grid img, .am-panel img, .modal-photo, .g-grid button { background: #efe9f7; }
+.mp-fig button, .plan-grid button, .loc-map .js-plan { background: #faf8fd; }
+.intro-price i { color: #d9cdee; }
+.close-sec .modal-perks li { color: #ece6f6; }
+.modal .btn-submit { background: var(--cta); border-color: #c9a253; color: var(--cta-ink); font-weight: 700; }
+.modal .btn-submit:hover { background: linear-gradient(100deg, #f8ebc6 0%, #ecd08d 48%, #d6b061 100%); color: var(--cta-ink); }
