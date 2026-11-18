@@ -1106,3 +1106,14 @@ button.hero-eoi:hover, .action-bar .ab-enquire:hover,
 .close-sec .modal-perks li { color: #ece6f6; }
 .modal .btn-submit { background: var(--cta); border-color: #c9a253; color: var(--cta-ink); font-weight: 700; }
 .modal .btn-submit:hover { background: linear-gradient(100deg, #f8ebc6 0%, #ecd08d 48%, #d6b061 100%); color: var(--cta-ink); }
+
+/* hero image: one still image, always visible. The old three-slide fade cycle left a single image
+   hidden for two thirds of every 18 seconds, so the hero read as a flat colour. */
+.hero > .hero-slide { animation: none; opacity: 1; }
+/* sky-coloured placeholder while the image downloads */
+.hero { background: linear-gradient(180deg, #2a1d47 0%, #3a2560 38%, #6d3f79 56%, #20182f 64%, #14101f 100%); }
+/* lighter wash so the township stays visible behind the copy */
+.hero-shade { background: linear-gradient(90deg, rgba(28,19,51,.9) 0%, rgba(28,19,51,.78) 28%, rgba(28,19,51,.4) 48%, rgba(28,19,51,.08) 70%, rgba(28,19,51,0) 100%), linear-gradient(0deg, rgba(28,19,51,.45), transparent 35%); }
+@media (max-width: 899px) { .hero-shade { background: linear-gradient(180deg, rgba(28,19,51,.5) 0%, rgba(28,19,51,.62) 45%, rgba(28,19,51,.8) 100%); } }
+/* image spans the full hero so there is no hard edge where it used to start */
+@media (min-width: 900px) { .hero > .hero-slide { left: 0; right: 0; width: 100%; object-position: 50% 55%; } }
