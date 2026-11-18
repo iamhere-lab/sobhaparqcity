@@ -1117,3 +1117,7 @@ button.hero-eoi:hover, .action-bar .ab-enquire:hover,
 @media (max-width: 899px) { .hero-shade { background: linear-gradient(180deg, rgba(28,19,51,.5) 0%, rgba(28,19,51,.62) 45%, rgba(28,19,51,.8) 100%); } }
 /* image spans the full hero so there is no hard edge where it used to start */
 @media (min-width: 900px) { .hero > .hero-slide { left: 0; right: 0; width: 100%; object-position: 50% 55%; } }
+
+/* Fewer CTAs: on desktop the sticky bar stays hidden while the hero (form, phone, EOI button) is on screen */
+.action-bar { transition: opacity .25s ease, transform .35s ease; }
+@media (min-width: 900px) { .action-bar.over-hero { opacity: 0; pointer-events: none; visibility: hidden; } }
