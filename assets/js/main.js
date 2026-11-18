@@ -618,9 +618,11 @@
   /* ---------- action bar: show after the hero ---------- */
   var bar = document.querySelector(".action-bar");
   var hero = document.querySelector(".hero");
+  if (bar) bar.classList.add("is-visible");
+  /* Desktop: the hero already has the form, phone and EOI button, so the bar waits until the hero is scrolled past. */
   if (bar && hero && "IntersectionObserver" in window) {
-    bar.classList.add("is-visible");
-  } else if (bar) bar.classList.add("is-visible");
+    new IntersectionObserver(function (en) { bar.classList.toggle("over-hero", en[0].isIntersecting && en[0].intersectionRatio > 0.25); }, { threshold: [0, 0.25, 0.5] }).observe(hero);
+  }
 })();
 
 /* ---------- header section menu ---------- */
