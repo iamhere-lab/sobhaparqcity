@@ -266,7 +266,7 @@
 
     if (form.elements.company.value || Date.now() - pageLoadedAt < 2500) {
       track("form_blocked", { form_id: formId });
-      showError(form, "We couldn't send that. Please try again in a moment, or call ");
+      showError(form, "We couldn't send that. Please try again in a moment.");
       return;
     }
 
@@ -282,14 +282,14 @@
     }
     if (recentLeadCount() >= 3) {
       track("form_blocked", { form_id: formId, reason: "rate_limit" });
-      showError(form, "We've already received enquiries from this device today. For anything more, please call ");
+      showError(form, "We've already received your enquiry. Our team will contact you shortly.");
       return;
     }
 
     if (!CFG.leadEndpoint) {
       console.warn("[SobhaHennur] SH_CONFIG.leadEndpoint is empty, so the lead was NOT sent. Configure it in assets/js/config.js.");
       track("lead_submit_error", { form_id: formId, reason: "no_endpoint" });
-      showError(form, "Online enquiries aren't connected on this page yet. Please call ");
+      showError(form, "We couldn't send that right now. Please try again later.");
       return;
     }
 
@@ -349,21 +349,15 @@
       console.error("[SobhaHennur] lead submit failed", err);
       track("lead_submit_error", { form_id: formId, reason: "network_or_server" });
       btn.disabled = false; sending = false; btn.textContent = label;
-      showError(form, "Something went wrong sending your details. Please try again, or call ");
+      showError(form, "Something went wrong sending your details. Please try again.");
     });
   }
 
-  function showError(form, lead) {
+  /* Form messages never show a phone number. */
+  function showError(form, msg) {
     var status = form.querySelector(".form-status");
     status.className = "form-status is-error";
-    status.textContent = lead;
-    var a = document.createElement("a");
-    if (!CFG.phoneE164) { var t = lead.replace(/(,? or call| Please call)\s*$/, "").trim(); status.textContent = /[.]$/.test(t) ? t : t + "."; return; }
-    a.href = "tel:" + CFG.phoneE164;
-    a.textContent = CFG.phoneDisplay || CFG.phoneE164;
-    a.setAttribute("data-cta", "form_error_call");
-    status.appendChild(a);
-    status.appendChild(document.createTextNode("."));
+    status.textContent = msg;
   }
 
   function showSuccess(form, name, repeat, intent) {
