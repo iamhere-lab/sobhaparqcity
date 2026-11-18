@@ -8,7 +8,7 @@ window.SH_CONFIG = {
    * (Pabbly / Zapier / Make webhook, Google Apps Script, Leadrat proxy).
    * Empty until a real endpoint exists: the form then refuses to submit
    * instead of showing a fake success message. */
-  leadEndpoint: "",
+  leadEndpoint: "https://connect.pabbly.com/webhook-listener/webhook/IjU3NjUwNTY1MDYzNTA0MzY1MjZjNTUzNyI_3D_pc/IjU3NjcwNTZiMDYzMjA0MzU1MjZmNTUzNjUxMzQi_pc",
 
   /* "form" = URL-encoded POST without a CORS preflight (right for Pabbly / Zapier / Make webhooks).
    * "json" = JSON POST (for your own endpoint that answers CORS). */
@@ -23,8 +23,8 @@ window.SH_CONFIG = {
 
   /* Sales / channel-partner number. Call buttons stay hidden until both are set.
    * Example: phoneDisplay "98765 43210", phoneE164 "+919876543210". */
-  phoneDisplay: "",
-  phoneE164: "",
+  phoneDisplay: "76766 65738",
+  phoneE164: "+917676665738",
 
   /* WhatsApp number, digits only with country code (e.g. "919876543210"). WhatsApp buttons stay hidden until set. */
   whatsappNumber: "",
