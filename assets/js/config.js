@@ -46,6 +46,6 @@ window.SH_CONFIG = {
   /* Named in the consent line: who will contact the enquirer. Confirm before launch. */
   consentEntity: "Sobha Limited and its authorised channel partners",
 
-  siteUrl: "",
+  siteUrl: "https://www.sobhaparqcityhennur.in/",
   privacyUrl: ""
 };
