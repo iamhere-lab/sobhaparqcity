@@ -36,6 +36,12 @@
   }
   function hasLead(phone) { return Object.prototype.hasOwnProperty.call(readLeads(), phone); }
   function anyLead() { return Object.keys(readLeads()).length > 0; }
+  /* Enquiries sent from this browser in the last 24 hours (different numbers), to stop one device flooding the CRM. */
+  function recentLeadCount() {
+    var all = readLeads(), now = Date.now(), n = 0;
+    for (var p in all) if (now - all[p] < 24 * 3600 * 1000) n++;
+    return n;
+  }
   function newLeadId() {
     try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}
     return "nn-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
@@ -120,9 +126,58 @@
     if (/(\d)\1{5,}/.test(d)) return true;
     return false;
   }
+  /* Mobile-number shape per country code offered in the form: length and leading digit(s). */
+  var INTL = {
+    "+971": { len: 9, re: /^5/ }, "+966": { len: 9, re: /^5/ }, "+974": { len: 8, re: /^[3567]/ },
+    "+965": { len: 8, re: /^[569]/ }, "+968": { len: 8, re: /^[79]/ }, "+973": { len: 8, re: /^[36]/ },
+    "+1": { len: 10, re: /^[2-9]\d{2}[2-9]/ }, "+44": { len: 10, re: /^7/ },
+    "+65": { len: 8, re: /^[89]/ }, "+61": { len: 9, re: /^4/ }
+  };
   function phoneValid(cc, digits) {
     if (cc === "+91") return /^[6-9]\d{9}$/.test(digits) && !looksJunk(digits);
-    return /^\d{6,14}$/.test(digits) && !looksJunk(digits);
+    var rule = INTL[cc];
+    if (rule) return digits.length === rule.len && rule.re.test(digits) && !looksJunk(digits);
+    return /^\d{7,14}$/.test(digits) && !looksJunk(digits);
+  }
+
+  /* Name: letters only (Latin or Indian scripts), at least 3 letters, and not a placeholder or keyboard mash. */
+  var NAME_OK = /^[A-Za-zऀ-ൿ][A-Za-zऀ-ൿ .'\-]*$/;
+  var JUNK_WORDS = /^(test|testing|tester|tests|asdf|asd|qwerty|abc|abcd|abcde|xyz|demo|sample|fake|dummy|none|null|nil|name|noname|user|admin|hello|hi|hey|unknown|anonymous|anon|lead|enquiry|enquire|nothing|nobody|someone|anyone|check|checking|trial|temp|xxx|aaa|zzz)$/;
+  var MASH = /(asdf|sdfg|dfgh|fghj|ghjk|hjkl|qwer|wert|erty|rtyu|tyui|yuio|uiop|zxcv|xcvb|cvbn|vbnm|qaz|wsx|lkjh|poiu|mnbv)/;
+  function nameProblem(name) {
+    var n = name.replace(/\s+/g, " ");
+    if (!NAME_OK.test(n)) return "Please enter your name using letters only.";
+    var letters = n.replace(/[^A-Za-zऀ-ൿ]/g, "");
+    if (letters.length < 3) return "Please enter your full name.";
+    if (/(.)\1\1/i.test(letters)) return "Please enter your real name.";
+    if (/^[A-Za-z]+$/.test(letters)) {
+      var low = n.toLowerCase(), words = low.split(/[ .'\-]+/).filter(Boolean);
+      for (var i = 0; i < words.length; i++) if (JUNK_WORDS.test(words[i])) return "Please enter your real name.";
+      var flat = letters.toLowerCase();
+      if (!/[aeiouy]/.test(flat) || /[bcdfghjklmnpqrstvwxz]{5,}/.test(flat) || MASH.test(flat)) return "Please enter your real name.";
+      if (/^(.{1,3})\1+$/.test(flat)) return "Please enter your real name.";
+    }
+    return "";
+  }
+
+  /* Email is optional, but if given it must look real: proper shape, no throwaway inbox, no placeholder, no common typo. */
+  var EMAIL_OK = /^[a-z0-9](?:[a-z0-9._%+\-]*[a-z0-9])?@(?:[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?\.)+[a-z]{2,}$/;
+  var EMAIL_TYPOS = {
+    "gmial.com": "gmail.com", "gmai.com": "gmail.com", "gmail.co": "gmail.com", "gmail.con": "gmail.com", "gmail.cm": "gmail.com",
+    "gamil.com": "gmail.com", "gnail.com": "gmail.com", "gmal.com": "gmail.com", "gmaill.com": "gmail.com", "gmail.om": "gmail.com",
+    "yaho.com": "yahoo.com", "yahooo.com": "yahoo.com", "yahoo.con": "yahoo.com", "yhoo.com": "yahoo.com",
+    "hotmial.com": "hotmail.com", "hotmai.com": "hotmail.com", "hotmail.con": "hotmail.com",
+    "outlok.com": "outlook.com", "outlook.con": "outlook.com", "redifmail.com": "rediffmail.com"
+  };
+  var EMAIL_BLOCKED = /^(mailinator\.com|yopmail\.com|guerrillamail\.(com|net|org)|sharklasers\.com|10minutemail\.(com|net)|tempmail\.(com|net|org)|temp-mail\.(org|io)|trashmail\.com|getnada\.com|dispostable\.com|maildrop\.cc|throwawaymail\.com|fakeinbox\.com|mailnesia\.com|mintemail\.com|moakt\.com|emailondeck\.com|example\.(com|org|net)|test\.com|testing\.com|abc\.com|xyz\.com|email\.test|domain\.com|mail\.test)$/;
+  var EMAIL_JUNK_LOCAL = /^(test|testing|tester|abc|abcd|asdf|asd|qwerty|xyz|demo|sample|fake|dummy|none|null|nil|na|no|noemail|nomail|email|mail|user|admin|example|a+|x+|z+|\d{1,4})$/;
+  function emailProblem(email) {
+    var e = email.toLowerCase();
+    if (!EMAIL_OK.test(e) || /\.\./.test(e)) return "Please enter a valid email address, or leave it blank.";
+    var at = e.lastIndexOf("@"), local = e.slice(0, at), domain = e.slice(at + 1);
+    if (EMAIL_TYPOS[domain]) return "Did you mean " + local + "@" + EMAIL_TYPOS[domain] + "?";
+    if (EMAIL_BLOCKED.test(domain) || EMAIL_JUNK_LOCAL.test(local) || MASH.test(local) || local === domain.split(".")[0]) return "Please enter a real email address, or leave it blank.";
+    return "";
   }
   function setError(form, name, msg) {
     var input = form.querySelector('[name="' + name + '"]');
@@ -138,12 +193,20 @@
     if (cc === "+91" && digits.length === 12 && digits.indexOf("91") === 0) digits = digits.slice(2);
     if (cc === "+91" && digits.length === 13 && digits.indexOf("091") === 0) digits = digits.slice(3);
     if (cc === "+91" && digits.length === 11 && digits.charAt(0) === "0") digits = digits.slice(1);
-    if (name.length < 2 || !/[A-Za-zऀ-ൿ]/.test(name)) { setError(form, "name", "Please enter your name."); ok = false; first = first || form.elements.name; }
+    if (cc !== "+91") {
+      var ccd = cc.slice(1), rule = INTL[cc];
+      if (rule && digits.length === ccd.length + rule.len && digits.indexOf(ccd) === 0) digits = digits.slice(ccd.length);
+      digits = digits.replace(/^0+/, "");
+    }
+    name = name.replace(/\s+/g, " ");
+    var nameErr = nameProblem(name);
+    if (nameErr) { setError(form, "name", nameErr); ok = false; first = first || form.elements.name; }
     else setError(form, "name", "");
-    if (!phoneValid(cc, digits)) { setError(form, "phone", cc === "+91" ? "Please enter a real 10-digit Indian mobile number (starting 6–9)." : "Please enter a valid mobile number."); ok = false; first = first || form.elements.phone; }
+    if (!phoneValid(cc, digits)) { setError(form, "phone", cc === "+91" ? "Please enter a real 10-digit Indian mobile number (starting 6–9)." : "Please enter a valid mobile number for " + cc + "."); ok = false; first = first || form.elements.phone; }
     else setError(form, "phone", "");
     var email = (form.elements.email ? form.elements.email.value.trim() : "");
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setError(form, "email", "Please enter a valid email address."); ok = false; first = first || form.elements.email; }
+    var emailErr = email ? emailProblem(email) : "";
+    if (emailErr) { setError(form, "email", emailErr); ok = false; first = first || form.elements.email; }
     else setError(form, "email", "");
     if (!form.elements.consent.checked) { setError(form, "consent", "Please tick the box so the sales team can contact you."); ok = false; first = first || form.elements.consent; }
     else setError(form, "consent", "");
@@ -176,6 +239,10 @@
     });
     form.elements.phone.addEventListener("input", function (e) {
       var v = e.target.value.replace(/[^\d\s+\-()]/g, ""); if (v !== e.target.value) e.target.value = v;
+    });
+    form.elements.name.addEventListener("input", function (e) {
+      if (e.isComposing) return;
+      var v = e.target.value.replace(/[0-9@#$%^&*_=+<>\/\\|~`!?:;"()\[\]{},]/g, ""); if (v !== e.target.value) e.target.value = v;
     });
     form.addEventListener("submit", function (e) { e.preventDefault(); handleSubmit(form, formId); });
     return form;
@@ -211,6 +278,11 @@
     if (hasLead(phoneKey)) {
       track("lead_duplicate_blocked", { form_id: formId, intent: intent });
       showSuccess(form, v.name, true, intent);
+      return;
+    }
+    if (recentLeadCount() >= 3) {
+      track("form_blocked", { form_id: formId, reason: "rate_limit" });
+      showError(form, "We've already received enquiries from this device today. For anything more, please call ");
       return;
     }
 
